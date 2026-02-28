@@ -16,6 +16,23 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2025-07-15',
 
+  hooks: {
+    // Workaround for nuxt/ui#6118: @nuxt/ui@4.5.0 auto-import scanner
+    // incorrectly registers 'options' (a parameter name) as an export from useResizable.js
+    'imports:extend'(imports) {
+      for (let i = imports.length - 1; i >= 0; i--) {
+        const entry = imports[i]
+        if (
+          entry?.name === 'options'
+          && typeof entry.from === 'string'
+          && entry.from.includes('useResizable')
+        ) {
+          imports.splice(i, 1)
+        }
+      }
+    },
+  },
+
   future: {
     compatibilityVersion: 4
   },
