@@ -21,7 +21,7 @@ async function getAccessToken(scopes: string[]): Promise<string> {
   }
 
   const config = useRuntimeConfig()
-  const saKeyJson = config.googleServiceAccountKey
+  const saKeyJson = config.googleServiceAccountKey as string
   if (!saKeyJson) {
     throw new Error('GSC_SERVICE_ACCOUNT_JSON not configured — set googleServiceAccountKey in runtimeConfig')
   }

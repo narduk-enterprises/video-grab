@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@narduk/eslint-config": "workspace:*",
-    "@loganrenz/nuxt-v4-template-layer": "^1.0.0",
+    "@loganrenz/nuxt-v4-template-layer": "workspace:*",
     "nuxt": "^4.3.1"
   },
   "devDependencies": {
