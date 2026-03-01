@@ -2,14 +2,14 @@
   "name": "nuxt-v4-template-monorepo",
   "private": true,
   "scripts": {
-    "dev": "pnpm -r --filter web dev",
-    "build": "pnpm -r build",
+    "dev": "doppler run -- pnpm -r --filter web dev",
+    "build": "doppler run -- pnpm -r build",
     "build:plugins": "pnpm --filter @narduk/eslint-config build",
-    "lint": "pnpm -r lint",
-    "typecheck": "pnpm -r typecheck",
-    "quality": "pnpm -r quality",
-    "setup": "jiti tools/init.ts",
-    "validate": "jiti tools/validate.ts"
+    "lint": "doppler run -- pnpm -r lint",
+    "typecheck": "doppler run -- pnpm -r typecheck",
+    "quality": "doppler run -- pnpm -r quality",
+    "setup": "doppler run -- jiti tools/init.ts",
+    "validate": "doppler run -- jiti tools/validate.ts"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

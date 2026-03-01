@@ -37,17 +37,11 @@
     "tailwindcss": "^4.2.1",
     "zod": "^4.3.6"
   },
-  "peerDependencies": {
-    "@narduk/eslint-config": "*"
-  },
-  "peerDependenciesMeta": {
-    "@narduk/eslint-config": {
-      "optional": true
-    }
-  },
+
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250620.0",
     "@iconify-json/lucide": "^1.2.94",
+    "@narduk/eslint-config": "workspace:*",
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^22.19.13",
     "drizzle-kit": "^0.31.9",
