@@ -71,11 +71,16 @@ jobs:
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ] && [ -n "$FALLBACK_API" ]; then
             echo "CLOUDFLARE_API_TOKEN=$FALLBACK_API" >> "$GITHUB_ENV"
-            echo "CLOUDFLARE_ACCOUNT_ID=$FALLBACK_ACCOUNT" >> "$GITHUB_ENV"
+            export CLOUDFLARE_API_TOKEN=$FALLBACK_API
           fi
 
-          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] && [ -z "$FALLBACK_API" ] || [ -z "$FALLBACK_ACCOUNT" ]; then
-            echo "Error: CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is completely missing from both Doppler and GitHub Secrets."
+          if [ -z "$CLOUDFLARE_ACCOUNT_ID" ] && [ -n "$FALLBACK_ACCOUNT" ]; then
+            echo "CLOUDFLARE_ACCOUNT_ID=$FALLBACK_ACCOUNT" >> "$GITHUB_ENV"
+            export CLOUDFLARE_ACCOUNT_ID=$FALLBACK_ACCOUNT
+          fi
+
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "Error: CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is completely missing."
             exit 1
           fi
 
