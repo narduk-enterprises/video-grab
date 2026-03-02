@@ -10,10 +10,10 @@ import { fileURLToPath } from 'node:url'
  * Safe to re-run — all steps check for existing state before making changes.
  * 
  * Usage:
- *   pnpm setup -- --name="my-app" --display="My App Name" --url="https://myapp.com"
+ *   pnpm run setup -- --name="my-app" --display="My App Name" --url="https://myapp.com"
  * 
  * Re-run (repair mode — skip string replacement and README):
- *   pnpm setup -- --name="my-app" --display="My App Name" --url="https://myapp.com" --repair
+ *   pnpm run setup -- --name="my-app" --display="My App Name" --url="https://myapp.com" --repair
  * 
  * What this does:
  * 1. Safely finds and replaces all boilerplate strings (skipped in --repair mode)
@@ -46,10 +46,10 @@ if (missingArgs.length > 0) {
   console.error('❌ Missing arguments!')
   console.error()
   console.error('Usage example:')
-  console.error('  pnpm setup -- --name="narduk-enterprises" --display="Narduk Enterprises" --url="https://nard.uk"')
+  console.error('  pnpm run setup -- --name="narduk-enterprises" --display="Narduk Enterprises" --url="https://nard.uk"')
   console.error()
   console.error('Re-run (repair infra only):')
-  console.error('  pnpm setup -- --name="narduk-enterprises" --display="Narduk Enterprises" --url="https://nard.uk" --repair')
+  console.error('  pnpm run setup -- --name="narduk-enterprises" --display="Narduk Enterprises" --url="https://nard.uk" --repair')
   console.error()
   console.error('Please provide: --name, --display, and --url')
   process.exit(1)

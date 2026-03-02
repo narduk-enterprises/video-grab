@@ -26,7 +26,7 @@ This is a **minimal Nuxt 4 + Nuxt UI 4** boilerplate deployed to **Cloudflare Wo
 | **Isolate**       | A Cloudflare Workers V8 isolate — a lightweight, stateless execution environment. Each request may hit a different isolate, so in-memory state is not shared across requests. |
 | **Per-isolate**   | Scoped to a single V8 isolate instance. Per-isolate rate limiting, for example, only tracks requests within one isolate's memory.                                             |
 | **Hub project**   | A Doppler project that stores shared infrastructure secrets (e.g. `narduk-nuxt-template`). You do NOT create these.                                                           |
-| **Spoke project** | A Doppler project for a specific app that references hub secrets via cross-project references. Created by `init.ts` (via `pnpm setup`).                                       |
+| **Spoke project** | A Doppler project for a specific app that references hub secrets via cross-project references. Created by `init.ts` (via `pnpm run setup`).                                   |
 
 For full-featured example implementations, see the **Showcase** apps in `apps/showcase/`, `apps/example-auth/`, `apps/example-blog/`, `apps/example-marketing/`, `apps/example-og-image/`, and `apps/example-apple-maps/`.
 
@@ -225,7 +225,7 @@ Follow these steps **in order** — the init script handles renaming, D1 provisi
 3. Install dependencies: `pnpm install`
 4. **Run the initialization script** (renames everything, provisions D1, creates Doppler project, pushes CI token to GitHub):
    ```bash
-   pnpm setup -- --name="your-app-name" --display="Your Display Name" --url="https://yoururl.com"
+   pnpm run setup -- --name="your-app-name" --display="Your Display Name" --url="https://yoururl.com"
    ```
 5. **Configure Local D1 (Critical Step):** If your app uses the database, you MUST add `nitro-cloudflare-dev` to your app to proxy D1 to the dev server:
    - `pnpm --filter your-app-name add -D nitro-cloudflare-dev`
@@ -363,7 +363,7 @@ These are opt-in feature recipes. Follow them when the project needs a specific 
    - `site.name` — change to your app's name
    - `site.description` — change to your app's description
    - `schemaOrg.identity.name` — match your app name
-     > _Note: If you ran `pnpm setup` with `--display`, these values were already replaced automatically._
+     > _Note: If you ran `pnpm run setup` with `--display`, these values were already replaced automatically._
 
 6. **Replace `apps/web/app/pages/index.vue`** — this is a placeholder landing page. Build your actual homepage.
 

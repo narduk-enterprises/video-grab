@@ -27,7 +27,7 @@ You are building a **simple task-list application** called `example-tasks` by us
    ```
 4. Run the initialization script to rename the project, configure D1 databases, secure CI tokens, and clean up template examples:
    ```bash
-   pnpm setup -- --name="example-tasks" --display="Tasks Example" --url="http://localhost:3000"
+   pnpm run setup -- --name="example-tasks" --display="Tasks Example" --url="http://localhost:3000"
    ```
 
 ### 2. Scaffold the App in `apps/web`
