@@ -47,6 +47,9 @@ jobs:
             nuxt-build-${{ hashFiles('pnpm-lock.yaml') }}-
             nuxt-build-
 
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
       # All secrets from the app's Doppler spoke project (prd config) are resolved —
       # including cross-project hub references — and injected into $GITHUB_ENV.
       # This makes CLOUDFLARE_API_TOKEN, NUXT_* keys, etc. available to Build & Deploy.

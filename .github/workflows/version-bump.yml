@@ -41,7 +41,7 @@ jobs:
             node -e "
               const fs = require('fs');
               const p = JSON.parse(fs.readFileSync('$pkg', 'utf8'));
-              if (p.private === false) return; // Skip publishable packages with own versioning
+              if (p.private === false) process.exit(0); // Skip publishable packages with own versioning
               p.version = '$VERSION';
               fs.writeFileSync('$pkg', JSON.stringify(p, null, 2) + '\n');
             "
