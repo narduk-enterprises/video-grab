@@ -7,9 +7,9 @@
 
 Built exclusively for the edge. This template combines the power of **Nuxt 4**, the aesthetics of **Nuxt UI 4 (Tailwind CSS 4)**, and the global low-latency of **Cloudflare Workers** with **D1 SQLite databases**.
 
-> **⚠️ ARCHITECTURE UPDATE:** This repository is a **PNPM Workspace Monorepo**. The application lives in `apps/web/` and consumes the published **`@loganrenz/nuxt-v4-template-layer`** npm package. Upstream fixes are received via `pnpm update @loganrenz/nuxt-v4-template-layer`.
+> **⚠️ ARCHITECTURE:** This repository is a **PNPM Workspace Monorepo**. Your application lives in `apps/web/` and consumes the shared layer at `layers/narduk-nuxt-layer/` (linked via `workspace:*` in `package.json`).
 
-> **Looking for examples?** Check out the companion repo **[`nuxt-v4-template-examples`](https://github.com/loganrenz/nuxt-v4-template-examples)** for full-featured implementations of auth, analytics, blog, dashboard layouts, and more.
+> **Looking for examples?** Check out the companion repo **[`narduk-nuxt-template-examples`](https://github.com/loganrenz/narduk-nuxt-template-examples)** for full-featured implementations of auth, analytics, blog, dashboard layouts, and more.
 
 ---
 
@@ -29,7 +29,7 @@ Built exclusively for the edge. This template combines the power of **Nuxt 4**, 
 
 ## ⚠️ IMPORTANT: This is a Template Repository
 
-> **DO NOT push changes back to `loganrenz/nuxt-v4-template`.** This repository is a read-only template. Always create your own copy first.
+> **DO NOT push changes back to `loganrenz/narduk-nuxt-template`.** This repository is a read-only template. Always create your own copy first.
 
 ---
 
@@ -38,7 +38,7 @@ Built exclusively for the edge. This template combines the power of **Nuxt 4**, 
 ### 1. Initial Setup
 
 ```bash
-git clone https://github.com/loganrenz/nuxt-v4-template.git my-new-project
+git clone https://github.com/loganrenz/narduk-nuxt-template.git my-new-project
 cd my-new-project
 pnpm install
 ```
@@ -106,21 +106,23 @@ apps/
   web/                 # The main Nuxt 4 application
     app/               # App UI (pages, components, layouts)
     server/            # Edge API endpoints and D1 database handling
-    nuxt.config.ts     # Extends @loganrenz/nuxt-v4-template-layer
-    package.json
+    nuxt.config.ts     # Extends @loganrenz/narduk-nuxt-template-layer
+  showcase/            # Landing page with links to each example app
+  example-auth/        # Auth example (independent worker)
+  example-blog/        # Blog example (independent worker)
+  example-marketing/   # Marketing UI example (independent worker)
+  example-og-image/    # OG image generation example
+  example-apple-maps/  # Apple Maps integration example
+layers/
+  narduk-nuxt-layer/   # Shared Nuxt Layer (consumed via workspace:*)
 packages/
   eslint-config/       # Workspace ESLint plugins
-node_modules/
-  @loganrenz/nuxt-v4-template-layer/  # Published layer (versioned, updatable)
-    app/               # Shared components, composables, plugins, types
-    server/            # Centralized API logic and database schemas
+tools/                 # Node.js automation scripts (init, validate, analytics)
 ```
 
 ### Updating the Layer
 
-```bash
-pnpm update @loganrenz/nuxt-v4-template-layer
-```
+Since the layer is a `workspace:*` link, changes to `layers/narduk-nuxt-layer/` are reflected immediately during development.
 
 ---
 
@@ -153,11 +155,11 @@ See **[AGENTS.md](./AGENTS.md)** for complete agent instructions, including:
 
 ## 📖 Examples Application
 
-For full-featured reference implementations, explore the **`apps/examples/`** directory in this workspace:
+For full-featured reference implementations, explore the example apps in this workspace:
 
-- 🔒 Authentication (Web Crypto PBKDF2 + D1 sessions)
-- 📊 Analytics (PostHog + GA4 + GSC + IndexNow setup automation)
-- 📝 Blog (Nuxt Content v3 with MDC rendering)
-- 🎨 UI Components (Hero, Pricing, Testimonials, Contact Forms)
-- 🏗️ Layouts (Blog, Dashboard with sidebar)
-- 🧪 Tests (Vitest unit + Playwright E2E)
+- 🔒 **example-auth/** — Authentication + Dashboard (Web Crypto PBKDF2, D1 sessions, sidebar layout)
+- 📊 **example-blog/** — Blog (Nuxt Content v3 with MDC rendering)
+- 🎨 **example-marketing/** — UI Components (Hero, Pricing, Testimonials, Contact Forms)
+- 🖼️ **example-og-image/** — Dynamic OG image generation
+- 🗺️ **example-apple-maps/** — Apple Maps integration
+- 🧪 **Tests** — Vitest unit + Playwright E2E across example apps

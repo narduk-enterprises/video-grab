@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/schemas/config/wrangler.json",
-  "name": "nuxt-v4-template",
+  "name": "narduk-nuxt-template",
   "main": ".output/server/index.mjs",
   "assets": {
     "directory": ".output/public"
@@ -13,7 +13,7 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "nuxt-v4-template-db",
+      "database_name": "narduk-nuxt-template-db",
       "database_id": "REPLACE_VIA_PNPM_SETUP"
     }
   ]

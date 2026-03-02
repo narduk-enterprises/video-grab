@@ -34,24 +34,51 @@ async function main() {
   const APP_NAME = packageJson.name
 
   let allGood = true
-  if (!APP_NAME || APP_NAME === 'nuxt-v4-template') {
-    console.error(`  ❌ Project name is still 'nuxt-v4-template'. Has init been run?`)
+  if (!APP_NAME || APP_NAME.includes('narduk-nuxt-template')) {
+    console.error(`  ❌ Project name is still '${APP_NAME}'. Has init been run?`)
     allGood = false
   }
 
   console.log(`\n🔍 Validating Setup for: ${APP_NAME}`)
 
-  // 1. Check Wrangler (D1 Database)
-  console.log('\nStep 1/4: Validating D1 Database...')
-  const dbName = `${APP_NAME}-db`
-  allGood = checkCommand(
-    `npx wrangler d1 info ${dbName}`,
-    `Database ${dbName} exists and is accessible.`,
-    `Database ${dbName} not found or Wrangler not authenticated`
-  ) && allGood
+  // 1. Check D1 Databases (reads database_name from each app's wrangler.json)
+  console.log('\nStep 1/4: Validating D1 Databases...')
+  try {
+    const appsDir = path.join(ROOT_DIR, 'apps')
+    const entries = await fs.readdir(appsDir, { withFileTypes: true })
+    const appDirs = entries.filter(e => e.isDirectory()).map(e => e.name)
+    let checkedAny = false
 
-  // 2. Check wrangler.json in each app
-  console.log('\nStep 2/4: Validating wrangler.json...')
+    for (const appDir of appDirs) {
+      const wranglerPath = path.join(appsDir, appDir, 'wrangler.json')
+      try {
+        const wranglerContent = await fs.readFile(wranglerPath, 'utf-8')
+        const parsedWrangler = JSON.parse(wranglerContent)
+        if (parsedWrangler.d1_databases && parsedWrangler.d1_databases.length > 0) {
+          const dbName = parsedWrangler.d1_databases[0].database_name
+          if (dbName) {
+            checkedAny = true
+            allGood = checkCommand(
+              `npx wrangler d1 info ${dbName}`,
+              `Database ${dbName} exists (apps/${appDir}).`,
+              `Database ${dbName} not found (apps/${appDir})`
+            ) && allGood
+          }
+        }
+      } catch {
+        // App doesn't have a wrangler.json — skip
+      }
+    }
+    if (!checkedAny) {
+      console.log('  ⏭ No apps with D1 databases to validate.')
+    }
+  } catch (e: any) {
+    console.error(`  ❌ Failed to scan apps directory: ${e.message}`)
+    allGood = false
+  }
+
+  // 2. Check wrangler.json database_id values
+  console.log('\nStep 2/4: Validating wrangler.json database IDs...')
   try {
     const appsDir = path.join(ROOT_DIR, 'apps')
     const entries = await fs.readdir(appsDir, { withFileTypes: true })
@@ -67,16 +94,14 @@ async function main() {
 
         if (parsedWrangler.d1_databases && parsedWrangler.d1_databases.length > 0) {
           const dbId = parsedWrangler.d1_databases[0].database_id
-          if (dbId && dbId.length > 0) {
+          if (dbId && dbId.length > 0 && dbId !== 'REPLACE_VIA_PNPM_SETUP') {
             console.log(`  ✅ apps/${appDir}/wrangler.json — database_id: ${dbId}`)
           } else {
-            console.error(`  ❌ apps/${appDir}/wrangler.json — database_id missing.`)
+            console.error(`  ❌ apps/${appDir}/wrangler.json — database_id missing or placeholder.`)
             allGood = false
           }
-        } else {
-          console.error(`  ❌ apps/${appDir}/wrangler.json — d1_databases misconfigured.`)
-          allGood = false
         }
+        // Apps without d1_databases are valid (e.g. marketing, og-image) — skip silently
       } catch {
         // App doesn't have a wrangler.json — skip
       }
@@ -126,7 +151,7 @@ async function main() {
   try {
     const remotesOutput = execSync('git remote -v', { encoding: 'utf-8', stdio: 'pipe' })
     const remotes = remotesOutput.split('\n').filter(Boolean)
-    const targetRemoteLine = remotes.find(line => !line.includes('nuxt-v4-template') && line.includes('(push)'))
+    const targetRemoteLine = remotes.find(line => !line.includes('narduk-nuxt-template') && line.includes('(push)'))
     if (targetRemoteLine) {
       let url = targetRemoteLine.split(/\s+/)[1]
       url = url.replace(/^(https?:\/\/|git@)/, '').replace(/^github\.com[:/]/, '').replace(/\.git$/, '')

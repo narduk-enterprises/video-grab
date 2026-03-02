@@ -19,12 +19,12 @@ const config = useRuntimeConfig()
 
 const examples = [
   {
-    title: 'Authentication',
-    description: 'Login, registration, and session management using Web Crypto PBKDF2 and D1.',
+    title: 'Auth & Dashboard',
+    description: 'Login, registration, session management, and a protected dashboard with sidebar navigation.',
     icon: 'i-lucide-lock',
     href: config.public.exampleAuthUrl as string,
     color: 'text-emerald-500',
-    features: ['Web Crypto PBKDF2', 'D1 sessions', 'CSRF protection', 'Zod validation'],
+    features: ['Web Crypto PBKDF2', 'D1 sessions', 'CSRF protection', 'Dashboard layout'],
   },
   {
     title: 'Blog',
@@ -41,14 +41,6 @@ const examples = [
     href: config.public.exampleMarketingUrl as string,
     color: 'text-purple-500',
     features: ['Hero section', 'Pricing table', 'Testimonials', 'Contact form'],
-  },
-  {
-    title: 'Dashboard',
-    description: 'Protected dashboard with sidebar navigation and auth integration.',
-    icon: 'i-lucide-layout-dashboard',
-    href: config.public.exampleDashboardUrl as string,
-    color: 'text-amber-500',
-    features: ['Sidebar layout', 'Auth middleware', 'Stats cards', 'Activity feed'],
   },
   {
     title: 'OG Images',
@@ -82,7 +74,7 @@ const examples = [
       </p>
       <div class="flex items-center justify-center gap-4">
         <UButton
-          to="https://github.com/loganrenz/nuxt-v4-template"
+          to="https://github.com/loganrenz/narduk-nuxt-template"
           target="_blank"
           icon="i-lucide-github"
           color="neutral"

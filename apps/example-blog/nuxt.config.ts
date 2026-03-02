@@ -12,7 +12,7 @@ const mdcOptimizeDepsPackages = [
 ]
 
 export default defineNuxtConfig({
-  extends: ['@loganrenz/nuxt-v4-template-layer'],
+  extends: ['@loganrenz/narduk-nuxt-template-layer'],
 
   modules: ['@nuxt/content'],
 

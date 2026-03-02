@@ -1,23 +1,34 @@
 # AGENTS.md — AI Agent Instructions
 
-> **🚨 CRITICAL: DO NOT PUSH TO `loganrenz/nuxt-v4-template` 🚨**
+> **🚨 CRITICAL: DO NOT PUSH TO `loganrenz/narduk-nuxt-template` 🚨**
 >
 > This is a **read-only template repository**. Before writing ANY code, you MUST create your own repo:
 >
 > ```bash
-> git clone https://github.com/loganrenz/nuxt-v4-template-monorepo.git <project-name>
+> git clone https://github.com/loganrenz/narduk-nuxt-template.git <project-name>
 > cd <project-name>
 > pnpm install
 > ```
 >
-> **Verify your remote** with `git remote -v` — it must NOT point to `loganrenz/nuxt-v4-template`.
+> **Verify your remote** with `git remote -v` — it must NOT point to `loganrenz/narduk-nuxt-template`.
 
 This is a **minimal Nuxt 4 + Nuxt UI 4** boilerplate deployed to **Cloudflare Workers** with **D1 SQLite** (Drizzle ORM).
 
-> **⚠️ ARCHITECTURE UPDATE:** This repository is a **PNPM Workspace Monorepo**. The application lives in `apps/web/` and consumes the published **`@loganrenz/nuxt-v4-template-layer`** npm package. This decouples the shared layer from the app, enabling downstream projects to receive upstream fixes via `pnpm update @loganrenz/nuxt-v4-template-layer`.
+> **⚠️ ARCHITECTURE:** This repository is a **PNPM Workspace Monorepo**. Your application lives in `apps/web/` and consumes the shared layer at `layers/narduk-nuxt-layer/` (linked via `"@loganrenz/narduk-nuxt-template-layer": "workspace:*"` in each app’s `package.json`; referenced in `nuxt.config.ts` as `extends: ['@loganrenz/narduk-nuxt-template-layer']`).
 > When building an app using this template, DO NOT recreate standard Nuxt UI components. Rely on the inherited layer.
 
-For full-featured example implementations, see the **Showcase** apps in `apps/showcase/`, `apps/example-auth/`, `apps/example-blog/`, `apps/example-marketing/`, and `apps/example-dashboard/`.
+## Glossary
+
+| Term              | Meaning                                                                                                                                                                       |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Layer**         | A Nuxt Layer (`layers/narduk-nuxt-layer/`) — shared components, composables, plugins, server utils, and CSS that all apps inherit. Lives in `layers/`. Not deployed directly. |
+| **Package**       | A workspace package (`packages/eslint-config/`) — standalone npm packages consumed by apps. Lives in `packages/`.                                                             |
+| **Isolate**       | A Cloudflare Workers V8 isolate — a lightweight, stateless execution environment. Each request may hit a different isolate, so in-memory state is not shared across requests. |
+| **Per-isolate**   | Scoped to a single V8 isolate instance. Per-isolate rate limiting, for example, only tracks requests within one isolate's memory.                                             |
+| **Hub project**   | A Doppler project that stores shared infrastructure secrets (e.g. `narduk-enterprise-apps`). You do NOT create these.                                                         |
+| **Spoke project** | A Doppler project for a specific app that references hub secrets via cross-project references. Created by `init.ts`.                                                          |
+
+For full-featured example implementations, see the **Showcase** apps in `apps/showcase/`, `apps/example-auth/`, `apps/example-blog/`, `apps/example-marketing/`, `apps/example-og-image/`, and `apps/example-apple-maps/`.
 
 ## Project Structure (PNPM Workspace)
 
@@ -27,27 +38,58 @@ This repository functions as a single **PNPM Workspace** managing the web applic
 pnpm-workspace.yaml        # Workspace root config
 package.json               # Global scripts (pnpm run dev, pnpm run quality)
 AGENTS.md                  # Global AI coding guidelines
-.agents/                   # Saved AI workflows
+.agents/                   # Saved AI workflows (invoked via /slash-commands)
 apps/
   web/                     # The main Nuxt 4 application
     app/                   # App UI (pages, components, layouts)
     server/                # Edge API endpoints and D1 database handling
-    nuxt.config.ts         # Extends @loganrenz/nuxt-v4-template-layer
+    nuxt.config.ts         # Extends @loganrenz/narduk-nuxt-template-layer
   showcase/                # Landing page with links to each example app
-    app/pages/             # Hub page with example directory (opens apps in new tabs)
   example-auth/            # Auth example (independent worker)
   example-blog/            # Blog example (independent worker)
   example-marketing/       # Marketing UI example (independent worker)
-  example-dashboard/       # Dashboard example (independent worker)
+  example-og-image/        # OG image generation example
+  example-apple-maps/      # Apple Maps integration example
+layers/
+  narduk-nuxt-layer/       # Shared Nuxt Layer (also published as npm package)
 packages/
-  eslint-config/           # Workspace ESLint plugins
-node_modules/
-  @loganrenz/nuxt-v4-template-layer/  # Published layer (versioned, updatable)
-    app/                   # Shared components, composables, plugins, types
-    server/                # Centralized API logic and database schemas
+  eslint-config/           # Workspace ESLint plugins (run pnpm build:plugins after changes)
+tools/                     # Node.js automation scripts (init, validate, analytics) — NOT edge code
+scripts/                   # Shell helper scripts (dev-kill, run-dev-auth)
 ```
 
-_Note: You can still create `app/components/`, `server/api/`, etc., in `apps/web/`, but ensure you aren't duplicating something that already exists in the Layer._
+## Where YOUR Code Goes
+
+- **`apps/web/`** — This is the **ONLY** directory you should modify during a migration or new project.
+- **`apps/example-*`** and **`apps/showcase/`** — Read-only reference implementations. **Delete them** for production projects.
+- **`layers/narduk-nuxt-layer/`** — Only modify if creating a generic, reusable feature for ALL Narduk apps.
+- **`packages/eslint-config/`** — Only modify if adding or editing ESLint rules.
+
+_You can create `app/components/`, `server/api/`, etc., in `apps/web/`, but ensure you aren't duplicating something already provided by the Layer (see Layer Manifest below)._
+
+## What the Layer Provides (DO NOT Duplicate)
+
+The layer at `layers/narduk-nuxt-layer/` provides all of the following out-of-the-box. **Do not copy or recreate these in your app.**
+
+| Category        | Files                                                                              | What You Get                                                            |
+| --------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| **Modules**     | `nuxt.config.ts`                                                                   | `@nuxt/ui`, `@nuxt/fonts`, `@nuxt/image`, `@nuxtjs/seo`, `@nuxt/eslint` |
+| **Nitro**       | `nuxt.config.ts`                                                                   | `cloudflare-module` preset, esbuild target, Drizzle inline              |
+| **UI/Color**    | `nuxt.config.ts` + `app/app.config.ts`                                             | colorMode, ogImage defaults, image provider                             |
+| **SEO**         | `app/composables/useSeo.ts`, `useSchemaOrg.ts`                                     | `useSeo()`, `useWebPageSchema()`, `useArticleSchema()`, etc.            |
+| **OG Images**   | `app/components/OgImage/*`                                                         | Dynamic OG image templates (Satori)                                     |
+| **Analytics**   | `app/plugins/gtag.client.ts`, `posthog.client.ts`                                  | PostHog + GA4 (no-op without keys)                                      |
+| **CSRF**        | `app/plugins/fetch.client.ts`, `server/middleware/csrf.ts`                         | Auto `X-Requested-With` header + server validation                      |
+| **Security**    | `server/middleware/cors.ts`, `securityHeaders.ts`                                  | CORS, CSP, X-Frame-Options, Referrer-Policy                             |
+| **Rate Limit**  | `server/utils/rateLimit.ts`                                                        | Per-isolate sliding-window IP limiter                                   |
+| **Database**    | `server/utils/database.ts`, `server/middleware/d1.ts`, `server/database/schema.ts` | D1 bindings, Drizzle connection, base schema                            |
+| **Storage**     | `server/utils/kv.ts`, `server/utils/r2.ts`                                         | KV and R2 binding helpers                                               |
+| **Auth**        | `server/utils/auth.ts`                                                             | `requireAdmin`, PBKDF2 password hashing                                 |
+| **Health**      | `server/api/health.get.ts`                                                         | `/api/health` endpoint                                                  |
+| **IndexNow**    | `server/api/indexnow/*`, `server/middleware/indexnow.ts`                           | IndexNow submission + key verification                                  |
+| **Error Pages** | `app/error.vue`                                                                    | Branded global error pages (404/500)                                    |
+| **Base CSS**    | `app/assets/css/main.css`                                                          | Tailwind v4 `@theme` tokens, glass/card utilities                       |
+| **App Shell**   | `app/app.vue`, `app/app.config.ts`                                                 | `<UApp>` wrapper, color token defaults                                  |
 
 ### Showcase Architecture
 
@@ -59,14 +101,14 @@ To add a new example app:
 2. Set the `EXAMPLE_<NAME>_URL` env var in the showcase's runtime config
 3. Add a card to `apps/showcase/app/pages/index.vue`
 
-**Dev and seed data:** Apps that use D1 (example-auth, example-blog, example-dashboard) run `db:ready` (migrate + seed) before `nuxt dev`, so the local D1 database is always created and populated with seed data when you start dev. From the repo root you can run `pnpm db:ready:showcase` once to prepare the shared showcase DB before `pnpm dev:showcase`.
+**Dev and seed data:** Apps that use D1 (example-auth, example-blog) run `db:ready` (migrate + seed) before `nuxt dev`, so the local D1 database is always created and populated with seed data when you start dev. From the repo root you can run `pnpm db:ready:auth` to prepare the auth example DB before `pnpm dev:showcase`.
 
 ### Updating the Layer
 
 To pull the latest layer fixes and features:
 
 ```bash
-pnpm update @loganrenz/nuxt-v4-template-layer
+pnpm update @loganrenz/narduk-nuxt-template-layer
 ```
 
 ## Hard Constraints (Cloudflare Workers)
@@ -169,34 +211,43 @@ Sitemap and robots.txt are automatic. OG image templates live in `app/components
 
 ## Starting a New Project from This Template
 
-1. Clone the repository: `git clone https://github.com/loganrenz/nuxt-v4-template-monorepo.git my-app`
-2. Install dependencies: `pnpm install`
-3. Remove the git origin: `git remote remove origin`
-4. Update `nuxt.config.ts` in `apps/web/` with your domain and site name.
-5. Set up secrets in **Doppler** (see Secrets recipe below).
-6. Run `pnpm run dev` to start building.
+Follow these steps **in order** — the init script handles renaming, D1 provisioning, and Doppler setup.
+
+1. Clone: `git clone https://github.com/loganrenz/narduk-nuxt-template.git my-app && cd my-app`
+2. Install: `pnpm install`
+3. **Run the init script** (renames everything, provisions D1, creates Doppler project):
+   ```bash
+   pnpm setup -- --name="your-app-name" --display="Your Display Name" --url="https://yoururl.com"
+   ```
+4. Wire up Doppler locally: `doppler setup --project your-app-name --config dev`
+5. Start dev: `doppler run -- pnpm run dev`
+6. Verify infrastructure: `pnpm run validate`
+
+> See the **🚀 Initialization Routine** recipe below for the full details and edge cases.
 
 ## 🚨 CRITICAL RULE: NEVER COMMIT TO THIS REPOSITORY 🚨
 
-If you are an agent building a new project inside a clone of this repository, **DO NOT COMMIT OR PUSH** directly back to `loganrenz/nuxt-v4-template`. Verify the user has set up a new remote origin first.
+If you are an agent building a new project inside a clone of this repository, **DO NOT COMMIT OR PUSH** directly back to `loganrenz/narduk-nuxt-template`. Verify the user has set up a new remote origin first.
 
 ## Quality Audit Workflows
 
-Run these during development (Antigravity slash-commands):
+Run these during development (Antigravity slash-commands). Each corresponds to a file in `.agents/workflows/`:
 
-| Workflow                  | Purpose                                                    |
-| ------------------------- | ---------------------------------------------------------- |
-| `/check-nuxt-ui-v4`       | Validates UI 4 component usage                             |
-| `/check-nuxt-ssr`         | Validates SSR-safe data fetching and hydration             |
-| `/check-store-separation` | Validates thin component / thick composable pattern        |
-| `/check-nitro-edge`       | Validates Cloudflare Workers compatibility                 |
-| `/check-seo-compliance`   | Audits pages for useSeo, Schema.org, and OG images         |
-| `/check-data-fetching`    | Catches waterfalls, raw $fetch, and N+1 queries            |
-| `/check-css-tokens`       | Audits Tailwind v4 import order, tokens, and deprecated    |
-| `/check-plugin-lifecycle` | Audits plugin naming, lifecycle safety, and analytics      |
-| `/check-types-services`   | Audits Thin Store decomposition (types/services/sizes)     |
-| `/check-hydration-safety` | Deep hydration audit (isHydrated, ClientOnly, DOM nesting) |
-| `/migrate-to-layer`       | Migration workflow to convert legacy apps to this layer    |
+| Workflow                      | Purpose                                                        |
+| ----------------------------- | -------------------------------------------------------------- |
+| `/audit-repo-hygiene`         | Full sweep for secrets, junk files, duplicated code            |
+| `/audit-template-compliance`  | Comprehensive Nuxt 4 + Nuxt UI 4 layer template audit          |
+| `/check-architecture`         | Thin Components, Thick Composables, Thin Stores separation     |
+| `/check-data-fetching`        | Catches waterfalls, raw $fetch, and N+1 queries                |
+| `/check-layer-health`         | Layer inheritance, shadowed files, config drift, overrides     |
+| `/check-plugin-lifecycle`     | Plugin naming, lifecycle safety, and analytics patterns        |
+| `/check-seo-compliance`       | Audits pages for useSeo, Schema.org, and OG images             |
+| `/check-ssr-hydration-safety` | SSR safety, window access, isHydrated, ClientOnly, DOM nesting |
+| `/check-ui-styling`           | Tailwind v4 CSS import order, token usage, Nuxt UI v4          |
+| `/migrate-to-monorepo`        | Migration workflow to convert legacy apps to this monorepo     |
+| `/review-cloudflare-layer`    | Full review of Nuxt layer + Cloudflare Workers setup           |
+| `/review-doppler-pattern`     | Audit Doppler secret management for completeness and security  |
+| `/score-repo`                 | Full repo audit — scores 19 categories out of 10               |
 
 ## ESLint Plugins (Automated Enforcement)
 
@@ -211,11 +262,39 @@ These workspace-local ESLint plugins enforce patterns at lint time. Many checks 
 
 **Build:** `pnpm run build:plugins` (ATX plugin is plain `.mjs` — no build needed).
 
+## Build Pipeline
+
+The monorepo uses **Turborepo** for task orchestration. Key dependency chains:
+
+```
+quality ← lint + typecheck
+lint    ← build:plugins (ESLint plugins must be compiled first)
+build   ← ^build (each app builds after its dependencies)
+deploy  ← build (production bundle required)
+```
+
+Common commands: `pnpm run quality` (lint + typecheck all packages), `pnpm run dev` (start `apps/web/`), `pnpm run dev:showcase` (start all example apps concurrently).
+
+## Layer Inventory (Do Not Duplicate)
+
+Before creating a new file in `apps/web/`, check this list — the layer already provides these:
+
+| Category                | Provided by Layer                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------------- |
+| **Composables**         | `useSeo`, `useSchemaOrg` (includes `useWebPageSchema`, `useArticleSchema`, `useProductSchema`)    |
+| **Plugins**             | `gtag.client.ts`, `posthog.client.ts`, `fetch.client.ts` (CSRF header injection)                  |
+| **Server Middleware**   | `cors.ts`, `csrf.ts`, `d1.ts` (database binding), `indexnow.ts`, `securityHeaders.ts`             |
+| **Server Utils**        | `database.ts`, `rateLimit.ts`, `auth.ts` (includes `requireAdmin`), `kv.ts`, `r2.ts`, `google.ts` |
+| **Server API Routes**   | `/api/health`, `/api/indexnow/submit`, `/api/admin/ga/overview`, `/api/admin/gsc/performance`     |
+| **Database Schema**     | Base schema in `server/database/schema.ts` (apps extend via re-export)                            |
+| **CSS / Design Tokens** | `main.css` with `@theme` tokens, utility classes (`.glass`, `.card-base`, etc.)                   |
+| **Server Routes**       | `cdn-cgi/image/[...path]` (Cloudflare image transforms)                                           |
+
 ---
 
 # 📖 Recipes
 
-These are opt-in feature recipes. Follow them when the project needs a specific capability. For working reference implementations, refer to the showcase apps: `apps/example-auth/`, `apps/example-blog/`, `apps/example-marketing/`, `apps/example-dashboard/`.
+These are opt-in feature recipes. Follow them when the project needs a specific capability. For working reference implementations, refer to the showcase apps: `apps/example-auth/`, `apps/example-blog/`, `apps/example-marketing/`.
 
 ---
 
@@ -379,11 +458,11 @@ doppler secrets set CLOUDFLARE_API_TOKEN='${narduk-enterprise-apps.prd.CLOUDFLAR
 
 ### Test Explorer: enabling Playwright projects
 
-E2E tests use a **single root config** (`playwright.config.ts` at repo root) with one project per app (showcase, example-auth, example-blog, example-marketing, example-dashboard). In the IDE Test Explorer, those projects can appear as **disabled** (greyed out) until you enable them: open the **Playwright** sidebar (below the Test Explorer), find **PROJECTS**, and **check the boxes** for the apps you want. After that you can run or debug tests from the Test Explorer as usual. From the terminal, `pnpm test:e2e` runs all projects; `pnpm test:e2e:auth` runs only the example-auth project.
+E2E tests use a **single root config** (`playwright.config.ts` at repo root) with one project per app (showcase, example-auth, example-blog, example-marketing). In the IDE Test Explorer, those projects can appear as **disabled** (greyed out) until you enable them: open the **Playwright** sidebar (below the Test Explorer), find **PROJECTS**, and **check the boxes** for the apps you want. After that you can run or debug tests from the Test Explorer as usual. From the terminal, `pnpm test:e2e` runs all projects; `pnpm test:e2e:auth` runs only the example-auth project.
 
 ---
 
-## 🔒 Recipe: Authentication (Web Crypto + D1 Sessions)
+## 🔒 Recipe: Authentication (Web Crypto + D1 Sessions) `[OPT-IN — FULL SETUP]`
 
 **When:** Your app needs user accounts, login, and protected routes.
 
@@ -424,7 +503,7 @@ All plugins **no-op gracefully** when their keys are empty — safe for dev with
 
 ---
 
-## 📝 Recipe: Content & Blog (Nuxt Content v3)
+## 📝 Recipe: Content & Blog (Nuxt Content v3) `[OPT-IN — FULL SETUP]`
 
 **When:** Your app needs a blog, documentation, or markdown-based content.
 
@@ -442,7 +521,7 @@ All plugins **no-op gracefully** when their keys are empty — safe for dev with
 
 ---
 
-## 🎯 Recipe: Linting & Code Quality
+## 🎯 Recipe: Linting & Code Quality `[INCLUDED]`
 
 **When:** Setting up ESLint for a new project.
 
@@ -461,14 +540,14 @@ All plugins **no-op gracefully** when their keys are empty — safe for dev with
 
 ---
 
-## 🎨 Recipe: UI Components (Landing Pages, Dashboards)
+## 🎨 Recipe: UI Components (Landing Pages, Dashboards) `[INCLUDED — COPY FROM EXAMPLES]`
 
 **When:** You need pre-built UI sections like heroes, pricing tables, testimonials, contact forms, or dashboard layouts.
 
 **Steps:**
 
 1. Browse components in `apps/example-marketing/app/components/ui/` — `HeroSection`, `PricingTable`, `TestimonialCarousel`, `ContactForm`.
-2. Browse layouts: `apps/example-blog/app/layouts/blog.vue`, `apps/example-dashboard/app/layouts/dashboard.vue`, `apps/example-marketing/app/layouts/landing.vue`.
+2. Browse layouts: `apps/example-blog/app/layouts/blog.vue`, `apps/example-auth/app/layouts/dashboard.vue`, `apps/example-marketing/app/layouts/landing.vue`.
 3. Copy what you need into your project's `app/components/` or `app/layouts/`.
 4. Customize colors via `app/app.config.ts` and fonts via `app/assets/css/main.css`.
 
@@ -476,7 +555,7 @@ All plugins **no-op gracefully** when their keys are empty — safe for dev with
 
 ---
 
-## 🛠️ Recipe: Form Handling
+## 🛠️ Recipe: Form Handling `[INCLUDED]`
 
 **When:** You need validated forms with Zod and consistent styling.
 

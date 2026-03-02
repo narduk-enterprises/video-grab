@@ -36,7 +36,7 @@ function createMockEvent(ip = '1.2.3.4'): MockEvent {
 beforeEach(() => {
   vi.mocked(getHeader).mockImplementation((event: never, name: string) => {
     if (name === 'cf-connecting-ip') return (event as unknown as MockEvent)._ip
-    return undefined
+  
   })
   vi.mocked(setResponseHeader).mockClear()
 })

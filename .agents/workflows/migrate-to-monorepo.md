@@ -1,18 +1,27 @@
 ---
-description: Migrate a flat Nuxt 4 app from ~/code into the nuxt-v4-template monorepo architecture
+description: Migrate a flat Nuxt 4 app from ~/code into the narduk-nuxt-template monorepo architecture
 ---
 
 # Migrate Existing Repo to Monorepo Template
 
-> **Scope:** This workflow converts a flat Nuxt 4 application (one of the ~10 repos in `~/code`) into a **new repository** by cloning the `nuxt-v4-template` monorepo scaffold and copying the app code into `apps/web/`.
+> **Scope:** This workflow converts a flat Nuxt 4 application (one of the ~10 repos in `~/code`) into a **new repository** by cloning the `narduk-nuxt-template` monorepo scaffold and copying the app code into `apps/web/`.
 
 // turbo-all
 
----
+## Quick Checklist (TL;DR)
+
+- [ ] **Phase 0:** Clone template + source → run `init.ts` → verify `pnpm run dev` starts
+- [ ] **Phase 1:** Audit source files (identify layer-provided vs app-specific vs junk)
+- [ ] **Phase 2:** Copy app files → merge CSS → merge app.vue → copy server code
+- [ ] **Phase 3:** Slim `nuxt.config.ts` → trim `package.json` → update `wrangler.json`
+- [ ] **Phase 4:** Clean up examples + junk files
+- [ ] **Phase 5:** `pnpm install` → `build:plugins` → `quality` → `dev` → seed DB
+- [ ] **Phase 6:** Run `/check-*` audit workflows
+- [ ] **Phase 7:** Move to `~/code` → push → final quality
 
 ## Prerequisites — Confirm Before Starting
 
-1. Read `~/code/nuxt-v4-template/AGENTS.md` in full. This is the golden reference.
+1. Read `~/code/narduk-nuxt-template/AGENTS.md` in full. This is the golden reference.
 2. Determine if the source repo is a Nuxt 4 app (has `nuxt.config.ts`). If not, STOP and notify the user.
 3. Identify the source repo name, e.g. `papa-everetts-pizza`. Determine the new project name, e.g. `papa-everetts-pizza-v2`.
 
@@ -32,7 +41,7 @@ description: Migrate a flat Nuxt 4 app from ~/code into the nuxt-v4-template mon
 
    **Reporter:** AI migration agent (running `/migrate-to-monorepo`)
    **Source app:** <source-repo-name>
-   **Template version:** <commit hash or date of nuxt-v4-template clone>
+   **Template version:** <commit hash or date of narduk-nuxt-template clone>
 
    **Issue:**
    <One-sentence summary of the problem>
@@ -48,7 +57,7 @@ description: Migrate a flat Nuxt 4 app from ~/code into the nuxt-v4-template mon
    a missing module registration, an incompatible plugin, etc.>
 
    **Steps to reproduce:**
-   1. Clone `nuxt-v4-template` at the commit above
+   1. Clone `narduk-nuxt-template` at the commit above
    2. Run `<exact command that triggers the error>`
 
    **Expected behavior:**
@@ -76,10 +85,10 @@ All migration work happens in `/tmp` to keep `~/code` clean.
 1. Clone the source repo and the template into `/tmp`:
    ```bash
    git clone ~/code/<source> /tmp/<source>
-   git clone https://github.com/loganrenz/nuxt-v4-template.git /tmp/<project-name>-v2
+   git clone https://github.com/loganrenz/narduk-nuxt-template.git /tmp/<project-name>-v2
    cd /tmp/<project-name>-v2
    rm -rf .git
-   git init && git add . && git commit -m "chore: scaffold from nuxt-v4-template"
+   git init && git add . && git commit -m "chore: scaffold from narduk-nuxt-template"
    ```
 2. Run the init script to rename everything:
    ```bash
@@ -339,6 +348,19 @@ Add any `r2_buckets` bindings if the source app had them.
    git add .
    git commit -m "feat: migrate <source-repo> to monorepo architecture"
    ```
+
+### Troubleshooting Common Migration Errors
+
+| Error                                                   | Cause                             | Fix                                                                  |
+| ------------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------- |
+| `D1_ERROR: no such table: ...`                          | DB not migrated/seeded            | `pnpm --filter web run db:migrate && pnpm --filter web run db:seed`  |
+| `Duplicated auto-import: X`                             | Layer already exports this        | Delete the app-level file (layer takes priority)                     |
+| `PostCSS warning: @import must precede all other rules` | CSS import ordering               | Move `@import` statements to top of CSS file, or use `app.head.link` |
+| `vue-official/no-setup-top-level-side-effects`          | Side effects in `<script setup>`  | Move `setInterval`, `setTimeout`, etc. into `onMounted()`            |
+| `unicorn/prefer-number-properties`                      | Raw `parseFloat`/`parseInt`       | Use `Number.parseFloat()` / `Number.parseInt()`                      |
+| `Cannot find module '@loganrenz/...'`                   | Workspace link broken             | Run `pnpm install` from repo root                                    |
+| `No D1 database binding`                                | Missing `wrangler.json` config    | Add `d1_databases` array with correct `database_id`                  |
+| `CSRF token rejected`                                   | Missing `X-Requested-With` header | Ensure layer's `fetch.client.ts` plugin is active (not shadowed)     |
 
 ---
 

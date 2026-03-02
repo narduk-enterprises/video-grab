@@ -13,7 +13,6 @@
   "services": [
     { "binding": "AUTH", "service": "example-auth" },
     { "binding": "BLOG", "service": "example-blog" },
-    { "binding": "DASHBOARD", "service": "example-dashboard" },
     { "binding": "MARKETING", "service": "example-marketing" },
     { "binding": "OG_IMAGE", "service": "example-og-image" },
     { "binding": "APPLE_MAPS", "service": "example-apple-maps" }

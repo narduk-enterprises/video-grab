@@ -14,14 +14,14 @@ function cycleColorMode() {
 }
 
 const navItems = [
-  { label: 'Overview', to: '/', icon: 'i-lucide-layout-dashboard' },
+  { label: 'Overview', to: '/dashboard/', icon: 'i-lucide-layout-dashboard' },
 ]
 </script>
 
 <template>
   <UApp>
     <div class="h-screen flex bg-default">
-      <aside class="w-64 border-r border-default bg-elevated flex flex-col hidden md:flex">
+      <aside class="w-64 border-r border-default bg-elevated flex flex-col max-md:hidden">
         <div class="p-4 border-b border-default flex items-center gap-3">
           <div class="size-8 rounded bg-primary text-white flex items-center justify-center font-bold">
             D

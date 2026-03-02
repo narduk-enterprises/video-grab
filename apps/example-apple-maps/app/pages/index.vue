@@ -42,7 +42,9 @@ function loadMapKit(): Promise<void> {
     script.dataset.libraries = 'map'
     script.dataset.token = token
     script.onerror = () => reject(new Error('Failed to load MapKit JS'))
-    document.head.appendChild(script)
+    if (import.meta.client) {
+      document.head.appendChild(script)
+    }
   })
 }
 

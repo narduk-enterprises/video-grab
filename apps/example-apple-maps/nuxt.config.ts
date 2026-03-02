@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  extends: ['@loganrenz/nuxt-v4-template-layer'],
+  extends: ['@loganrenz/narduk-nuxt-template-layer'],
 
   future: {
     compatibilityVersion: 4,

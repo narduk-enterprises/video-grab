@@ -33,7 +33,7 @@ watch(route, () => {
 
 <template>
   <UApp>
-    <ULink to="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg">Skip to content</ULink>
+    <ULink to="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg">Skip to content</ULink>
     <div class="app-shell min-h-screen flex flex-col">
       <!-- Header -->
       <div class="sticky top-0 z-50 border-b border-default bg-default/80 backdrop-blur-xl">

@@ -4,7 +4,7 @@ import { existsSync, readFileSync, writeFileSync, readdirSync, mkdirSync } from 
 import { join, resolve } from 'node:path'
 import { request } from 'node:https'
 import { URL } from 'node:url'
-import 'dotenv/config'
+// NOTE: No dotenv import — Doppler injects env vars at runtime via `doppler run --`.
 
 /** HTTPS request helper (avoids TLS issues some envs have with fetch + PostHog). */
 function _httpsJson(
@@ -155,8 +155,8 @@ function checkStatus(): StatusResult {
     'Run: npm run setup:posthog (or set manually from Project Settings)'
   )
   check(
-    'POSTHOG_PUBLIC_KEY',
-    env('POSTHOG_PUBLIC_KEY'),
+    'POSTHOG_PROJECT_ID',
+    env('POSTHOG_PROJECT_ID'),
     'Set from Hubble/Analytics central project'
   )
   check(
@@ -300,17 +300,13 @@ async function runGaSetup() {
   const gaAccountId = env('GA_ACCOUNT_ID')
 
   if (!hasGscCredentials()) {
-    console.error('❌  Service account credentials required. Set GSC_SERVICE_ACCOUNT_JSON_PATH or GSC_SERVICE_ACCOUNT_JSON in Doppler.')
-    process.exit(1)
+    throw new Error('Service account credentials required. Set GSC_SERVICE_ACCOUNT_JSON_PATH or GSC_SERVICE_ACCOUNT_JSON in Doppler.')
   }
   if (!gaAccountId) {
-    console.error('❌  GA_ACCOUNT_ID is required.')
-    console.error('   Find it at https://analytics.google.com → Admin → Account settings (e.g. 123456789).')
-    process.exit(1)
+    throw new Error('GA_ACCOUNT_ID is required. Find it at https://analytics.google.com → Admin → Account settings.')
   }
   if (!siteUrl) {
-    console.error('❌  SITE_URL is required for the web data stream.')
-    process.exit(1)
+    throw new Error('SITE_URL is required for the web data stream.')
   }
 
   // @ts-expect-error googleapis is used as an optional dev script dependency
@@ -452,9 +448,7 @@ async function runGscPipeline() {
   const siteUrl = env('SITE_URL')
 
   if (!hasGscCredentials() || !siteUrl) {
-    console.error('❌  Service account credentials and SITE_URL are required for GSC setup.')
-    console.error('   Set GSC_SERVICE_ACCOUNT_JSON_PATH (or GSC_SERVICE_ACCOUNT_JSON) and SITE_URL in Doppler.')
-    process.exit(1)
+    throw new Error('Service account credentials and SITE_URL are required for GSC setup. Set GSC_SERVICE_ACCOUNT_JSON_PATH (or GSC_SERVICE_ACCOUNT_JSON) and SITE_URL in Doppler.')
   }
 
   // @ts-expect-error googleapis is used as an optional dev script dependency
@@ -545,9 +539,7 @@ async function runGscVerify() {
   const siteUrl = env('SITE_URL')
 
   if (!hasGscCredentials() || !siteUrl) {
-    console.error('❌  Service account credentials and SITE_URL are required.')
-    console.error('   Set GSC_SERVICE_ACCOUNT_JSON_PATH (or GSC_SERVICE_ACCOUNT_JSON) and SITE_URL in Doppler.')
-    process.exit(1)
+    throw new Error('Service account credentials and SITE_URL are required. Set GSC_SERVICE_ACCOUNT_JSON_PATH (or GSC_SERVICE_ACCOUNT_JSON) and SITE_URL in Doppler.')
   }
 
   // @ts-expect-error googleapis is used as an optional dev script dependency
@@ -650,11 +642,7 @@ async function runSetupAll() {
   if (!hasGscCredentials()) missing.push('GSC_SERVICE_ACCOUNT_JSON or GSC_SERVICE_ACCOUNT_JSON_PATH')
 
   if (missing.length) {
-    console.error('❌  Missing required keys (set in Doppler):')
-    missing.forEach((k) => console.error(`     ${k}`))
-    console.error()
-    console.error('   Then run: doppler run -- npm run setup:all')
-    process.exit(1)
+    throw new Error(`Missing required keys (set in Doppler): ${missing.join(', ')}. Then run: doppler run -- npm run setup:all`)
   }
 
   console.log()

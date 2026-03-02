@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 /**
  * INIT.TS — Nuxt v4 Template Initialization Script (Idempotent)
  * ----------------------------------------------------------------
- * Automates the transformation of a fresh `nuxt-v4-template` clone into a ready-to-deploy app.
+ * Automates the transformation of a fresh `narduk-nuxt-template` clone into a ready-to-deploy app.
  * Safe to re-run — all steps check for existing state before making changes.
  * 
  * Usage:
@@ -58,16 +58,22 @@ const DISPLAY_NAME = args.display as string
 const SITE_URL = (args.url as string).replace(/\/$/, '') // strip trailing slash
 let REPAIR_MODE = !!args.repair
 
+// Validate APP_NAME to prevent shell injection
+if (!/^[a-z0-9][a-z0-9-]*$/.test(APP_NAME)) {
+  console.error('❌ Invalid --name: must match /^[a-z0-9][a-z0-9-]*$/ (lowercase alphanumeric + hyphens).')
+  process.exit(1)
+}
+
 // Boilerplate targets to replace
 // Order matters: more-specific patterns must come before less-specific ones
 // Note: "Nuxt 4 Demo" display name is NOT replaced here — the layer reads
 // `runtimeConfig.public.appName` (set by APP_NAME env var via Doppler) at runtime.
 const REPLACEMENTS = [
-  { from: /nuxt-v4-template-examples-db/g, to: `${APP_NAME}-examples-db` },
-  { from: /nuxt-v4-template-examples/g, to: `${APP_NAME}-examples` },
-  { from: /nuxt-v4-template-db/g, to: `${APP_NAME}-db` },
-  { from: /nuxt-v4-template/g, to: APP_NAME },
-  { from: /https:\/\/nuxt-v4-template\.workers\.dev/g, to: SITE_URL }
+  { from: /narduk-nuxt-template-examples-db/g, to: `${APP_NAME}-examples-db` },
+  { from: /narduk-nuxt-template-examples/g, to: `${APP_NAME}-examples` },
+  { from: /narduk-nuxt-template-db/g, to: `${APP_NAME}-db` },
+  { from: /narduk-nuxt-template/g, to: APP_NAME },
+  { from: /https:\/\/narduk-nuxt-template\.workers\.dev/g, to: SITE_URL }
 ]
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -116,7 +122,7 @@ async function main() {
   // Auto-detect if already initialized to protect existing projects
   try {
     const pkgContent = await fs.readFile(path.join(ROOT_DIR, 'package.json'), 'utf-8')
-    if (!JSON.parse(pkgContent).name.includes('nuxt-v4-template')) {
+    if (!JSON.parse(pkgContent).name.includes('narduk-nuxt-template')) {
       REPAIR_MODE = true
     }
   } catch {
@@ -134,8 +140,10 @@ async function main() {
     let changedFiles = 0
 
     for (const file of files) {
-      // Specifically skip this init script so we don't dynamically break the replacements
+      // Skip this init script so we don't dynamically break the replacements
       if (file.endsWith('tools/init.ts')) continue
+      // Skip documentation files — they reference the template name intentionally
+      if (file.endsWith('.md')) continue
 
       const original = await fs.readFile(file, 'utf-8')
       let content = original
@@ -282,7 +290,7 @@ async function main() {
     console.log('\nStep 4/8: Resetting README.md...')
     const readmeContent = `# ${DISPLAY_NAME}
 
-**${APP_NAME}** — initialized from \`nuxt-v4-template\`.
+**${APP_NAME}** — initialized from \`narduk-nuxt-template\`.
 
 ## Live Site
 [${SITE_URL}](${SITE_URL})
@@ -290,12 +298,12 @@ async function main() {
 ## Local Development
 
 1. Setup environment variables (e.g. via Doppler)
-2. Run database migration: \`npm run db:migrate\`
-3. Start dev server: \`npm run dev\`
+2. Run database migration: \`pnpm run db:migrate\`
+3. Start dev server: \`pnpm run dev\`
 
 ## Deployment
 
-Pushes to \`main\` are automatically built and deployed via the GitHub Actions CI/CD workflows utilizing \`npm run deploy\`.
+Pushes to \`main\` are automatically built and deployed via the GitHub Actions CI/CD workflows utilizing \`pnpm run deploy\`.
 `
     await fs.writeFile(path.join(ROOT_DIR, 'README.md'), readmeContent, 'utf-8')
     console.log(`  ✅ Generated fresh README.`)
@@ -349,7 +357,7 @@ Pushes to \`main\` are automatically built and deployed via the GitHub Actions C
   let hasGitRemote = false
   try {
     const remotesCheck = execSync('git remote -v', { encoding: 'utf-8', stdio: 'pipe' }).trim()
-    hasGitRemote = remotesCheck.split('\n').some(line => !line.includes('nuxt-v4-template') && line.includes('(push)'))
+    hasGitRemote = remotesCheck.split('\n').some(line => !line.includes('narduk-nuxt-template') && line.includes('(push)'))
   } catch { /* no git or no remotes */ }
 
   if (!hasGitRemote) {
@@ -381,12 +389,12 @@ Pushes to \`main\` are automatically built and deployed via the GitHub Actions C
           throw new Error('Doppler returned an empty token.')
         }
 
-        // Automatically determine the target GitHub repository (excluding nuxt-v4-template)
+        // Automatically determine the target GitHub repository (excluding narduk-nuxt-template)
         let targetRepoFlag = ''
         try {
           const remotesOutput = execSync('git remote -v', { encoding: 'utf-8', stdio: 'pipe' })
           const remotes = remotesOutput.split('\n').filter(Boolean)
-          const targetRemoteLine = remotes.find(line => !line.includes('nuxt-v4-template') && line.includes('(push)'))
+          const targetRemoteLine = remotes.find(line => !line.includes('narduk-nuxt-template') && line.includes('(push)'))
           if (targetRemoteLine) {
             let url = targetRemoteLine.split(/\s+/)[1]
             if (url) {
@@ -446,7 +454,7 @@ Pushes to \`main\` are automatically built and deployed via the GitHub Actions C
           env: {
             ...process.env,
             APP_NAME,
-            GSC_USER_EMAIL: 'narduk@gmail.com'
+            GSC_USER_EMAIL: process.env.GSC_USER_EMAIL || ''
           }
         })
         console.log(`  ✅ Analytics & Search Console setup successful.`)

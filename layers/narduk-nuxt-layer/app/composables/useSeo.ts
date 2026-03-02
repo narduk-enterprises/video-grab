@@ -85,9 +85,8 @@ export function useSeo(options: SeoOptions) {
     description,
     ogTitle: title,
     ogDescription: description,
-    // Cast needed: @nuxtjs/seo's TS union for ogType is incomplete (e.g. missing 'product').
-    // Valid OG types per spec are broader than the library's type definition.
-    ogType: type as string,
+    // ogType accepts 'website' | 'article' | 'profile' etc.
+    ogType: type,
     twitterCard: 'summary_large_image',
     twitterTitle: title,
     twitterDescription: description,

@@ -4,7 +4,7 @@ import { resolve, dirname } from 'node:path'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineNuxtConfig({
-  extends: ['@loganrenz/nuxt-v4-template-layer'],
+  extends: ['@loganrenz/narduk-nuxt-template-layer'],
 
   modules: ['nitro-cloudflare-dev', 'nuxt-auth-utils'],
 

@@ -1,11 +1,11 @@
 {
-  "name": "@loganrenz/nuxt-v4-template-layer",
+  "name": "@loganrenz/narduk-nuxt-template-layer",
   "version": "1.0.7",
   "type": "module",
   "description": "Narduk Nuxt 4 Layer — shared components, composables, server routes, and Drizzle schema for Cloudflare Workers apps",
   "repository": {
     "type": "git",
-    "url": "https://github.com/loganrenz/nuxt-v4-template.git",
+    "url": "https://github.com/loganrenz/narduk-nuxt-template.git",
     "directory": "layers/narduk-nuxt-layer"
   },
   "publishConfig": {

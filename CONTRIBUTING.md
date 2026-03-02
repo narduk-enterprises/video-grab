@@ -11,7 +11,7 @@ Welcome! This guide helps you get up and running with the **Nuxt 4 + Nuxt UI 4 E
 ## Quick Start
 
 ```bash
-git clone https://github.com/loganrenz/nuxt-v4-template.git my-project
+git clone https://github.com/loganrenz/narduk-nuxt-template.git my-project
 cd my-project
 pnpm install
 pnpm run dev          # Starts apps/web with hot reload
@@ -21,7 +21,7 @@ pnpm run dev          # Starts apps/web with hot reload
 
 ```
 apps/           → Nuxt 4 applications (web, showcase, examples)
-layers/         → Shared Nuxt Layer (published as @loganrenz/nuxt-v4-template-layer)
+layers/         → Shared Nuxt Layer (consumed via workspace:*)
 packages/       → Workspace packages (eslint-config)
 tools/          → Init, validate, and setup scripts
 .agents/        → AI agent workflows
