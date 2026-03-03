@@ -4,10 +4,11 @@
   "private": true,
   "version": "1.10.3",
   "scripts": {
+    "generate:favicons": "node scripts/generate-favicons.mjs",
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "db:migrate": "wrangler d1 execute narduk-nuxt-template-db --local --file=drizzle/0000_initial_schema.sql",
-    "db:seed": "wrangler d1 execute narduk-nuxt-template-db --local --file=node_modules/@narduk-enterprises/narduk-nuxt-template-layer/drizzle/seed.sql",
+    "db:migrate": "wrangler d1 execute video-grab-db --local --file=drizzle/0000_initial_schema.sql",
+    "db:seed": "wrangler d1 execute video-grab-db --local --file=node_modules/@narduk-enterprises/narduk-nuxt-template-layer/drizzle/seed.sql",
     "db:studio": "drizzle-kit studio",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
+    "sharp": "^0.33.5",
     "eslint": "^10.0.2",
     "nitro-cloudflare-dev": "^0.2.2",
     "tailwindcss": "^4.0.0",

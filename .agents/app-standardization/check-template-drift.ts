@@ -1,13 +1,13 @@
 /**
  * Template Drift Detection — Compares an app's infrastructure files against
- * the canonical narduk-nuxt-template and reports files that have drifted.
+ * the canonical video-grab and reports files that have drifted.
  *
  * Usage:
  *   tsx .agents/app-standardization/check-template-drift.ts <app-dir>
  *   tsx .agents/app-standardization/check-template-drift.ts ~/new-code/neon-sewer-raid
  *
  * Requirements:
- *   - Both the app and ~/new-code/narduk-nuxt-template must exist
+ *   - Both the app and ~/new-code/video-grab must exist
  */
 
 import { execSync } from 'node:child_process'
@@ -16,7 +16,7 @@ import { join, relative } from 'node:path'
 
 // ─── Configuration ──────────────────────────────────────────
 
-const TEMPLATE_DIR = join(process.env.HOME || '~', 'new-code', 'narduk-nuxt-template')
+const TEMPLATE_DIR = join(process.env.HOME || '~', 'new-code', 'video-grab')
 
 /**
  * Critical infrastructure files that MUST match the template.

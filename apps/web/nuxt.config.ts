@@ -17,6 +17,15 @@ export default defineNuxtConfig({
     },
   },
 
+  css: ['~/assets/css/brand.css'],
+
+  fonts: {
+    families: [
+      { name: 'Syne', provider: 'google' },
+      { name: 'Plus Jakarta Sans', provider: 'google' },
+    ],
+  },
+
   future: {
     compatibilityVersion: 4
   },
@@ -29,7 +38,7 @@ export default defineNuxtConfig({
     posthogProjectId: process.env.POSTHOG_PROJECT_ID || '',
     public: {
       appUrl: process.env.SITE_URL || 'https://narduk.workers.dev',
-      appName: process.env.APP_NAME || 'Nuxt 4 Demo',
+      appName: process.env.APP_NAME || 'Video Grab',
       // Analytics
       posthogPublicKey: process.env.POSTHOG_PUBLIC_KEY || '',
       posthogHost: process.env.POSTHOG_HOST || 'https://us.i.posthog.com',
@@ -42,15 +51,15 @@ export default defineNuxtConfig({
 
   site: {
     url: process.env.SITE_URL || 'https://narduk.workers.dev',
-    name: 'Nuxt 4 Demo',
-    description: 'A production-ready demo template showcasing Nuxt 4, Nuxt UI 4, Tailwind CSS 4, and Cloudflare Workers with D1 database.',
+    name: 'Video Grab',
+    description: 'Video Grab — powered by Nuxt 4 and Cloudflare Workers.',
     defaultLocale: 'en',
   },
 
   schemaOrg: {
     identity: {
       type: 'Organization',
-      name: 'Nuxt 4 Demo',
+      name: 'Video Grab',
       url: process.env.SITE_URL || 'https://narduk.workers.dev',
       logo: '/favicon.svg',
     },
