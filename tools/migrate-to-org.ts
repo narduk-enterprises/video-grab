@@ -140,7 +140,7 @@ function main() {
   console.log()
   console.log('Step 3: Updating git remotes...')
   const newOrigin = `https://github.com/${TARGET_ORG}/${repoName}.git`
-  const newTemplate = `https://github.com/${TARGET_ORG}/narduk-nuxt-template.git`
+  const newTemplate = `https://github.com/${TARGET_ORG}/video-grab.git`
 
   if (!dryRun) {
     try { run(`git remote set-url origin ${newOrigin}`) } catch { /* ignore */ }

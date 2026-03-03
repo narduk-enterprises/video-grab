@@ -1,0 +1,127 @@
+/* Video Grab — brand overrides (loads after layer main.css)
+ * Creative direction: Bold, fast, confident. Cyan = speed & clarity. Syne + Plus Jakarta Sans. */
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Syne', system-ui, sans-serif;
+  --radius-card: 1.25rem;
+  --radius-button: 0.625rem;
+}
+
+/* Hero gradient mesh — works in light/dark */
+.hero-mesh {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgb(var(--color-primary-500) / 0.15), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgb(var(--color-primary-400) / 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 0% 0%, rgb(var(--color-primary-400) / 0.08), transparent);
+}
+
+.dark .hero-mesh {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgb(var(--color-primary-400) / 0.2), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgb(var(--color-primary-400) / 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 0% 0%, rgb(var(--color-primary-400) / 0.12), transparent);
+}
+
+/* Premium card — subtle ring and hover */
+.card-premium {
+  border-radius: var(--radius-card);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.04),
+    0 2px 6px -2px rgb(0 0 0 / 0.08),
+    0 8px 24px -12px rgb(0 0 0 / 0.12);
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+.dark .card-premium {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.06),
+    0 2px 6px -2px rgb(0 0 0 / 0.3),
+    0 8px 24px -12px rgb(0 0 0 / 0.4);
+}
+
+.card-premium:hover {
+  box-shadow:
+    0 0 0 1px rgb(var(--color-primary-500) / 0.2),
+    0 4px 12px -4px rgb(var(--color-primary-500) / 0.15),
+    0 12px 32px -16px rgb(0 0 0 / 0.15);
+}
+
+.dark .card-premium:hover {
+  box-shadow:
+    0 0 0 1px rgb(var(--color-primary-400) / 0.25),
+    0 4px 12px -4px rgb(var(--color-primary-400) / 0.12),
+    0 12px 32px -16px rgb(0 0 0 / 0.5);
+}
+
+/* Success state entrance */
+@keyframes success-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-success-in {
+  animation: success-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Subtle loading pulse on card */
+@keyframes card-pulse {
+  from,
+  to {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.92;
+  }
+}
+
+.animate-card-pulse {
+  animation: card-pulse 1.5s ease-in-out infinite;
+}
+
+/* ─── Dark mode: intentional depth (not flat black) ─── */
+
+.dark .app-shell {
+  background-color: rgb(9 9 11); /* zinc-950 */
+}
+
+.dark body {
+  background-color: rgb(9 9 11);
+}
+
+/* Hero with background image — gradients layer on top for tint + scrim */
+.hero-with-bg {
+  background-color: rgb(9 9 11);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgb(var(--color-primary-500) / 0.2), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgb(var(--color-primary-400) / 0.1), transparent),
+    radial-gradient(ellipse 60% 40% at 0% 0%, rgb(var(--color-primary-400) / 0.1), transparent),
+    linear-gradient(to bottom, rgb(9 9 11 / 0.75) 0%, rgb(9 9 11 / 0.97) 100%),
+    url('/images/hero-bg.webp');
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, cover;
+  background-position: 0 0, 0 0, 0 0, 0 0, center;
+}
+
+.dark .hero-with-bg {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgb(var(--color-primary-400) / 0.25), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgb(var(--color-primary-400) / 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 0% 0%, rgb(var(--color-primary-400) / 0.12), transparent),
+    linear-gradient(to bottom, rgb(9 9 11 / 0.7) 0%, rgb(9 9 11 / 0.95) 100%),
+    url('/images/hero-bg.webp');
+}
+
+.scheme-light .hero-with-bg {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgb(var(--color-primary-500) / 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgb(var(--color-primary-400) / 0.06), transparent),
+    radial-gradient(ellipse 60% 40% at 0% 0%, rgb(var(--color-primary-400) / 0.06), transparent),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.88) 0%, rgb(255 255 255 / 0.98) 100%),
+    url('/images/hero-bg.webp');
+}
