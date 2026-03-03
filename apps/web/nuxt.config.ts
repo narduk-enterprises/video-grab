@@ -37,7 +37,7 @@ export default defineNuxtConfig({
     gaPropertyId: process.env.GA_PROPERTY_ID || '',
     posthogProjectId: process.env.POSTHOG_PROJECT_ID || '',
     public: {
-      appUrl: process.env.SITE_URL || 'https://narduk.workers.dev',
+      appUrl: process.env.SITE_URL || 'https://video-grab.nard.uk',
       appName: process.env.APP_NAME || 'Video Grab',
       // Analytics
       posthogPublicKey: process.env.POSTHOG_PUBLIC_KEY || '',
@@ -50,7 +50,7 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: process.env.SITE_URL || 'https://narduk.workers.dev',
+    url: process.env.SITE_URL || 'https://video-grab.nard.uk',
     name: 'Video Grab',
     description: 'Video Grab — powered by Nuxt 4 and Cloudflare Workers.',
     defaultLocale: 'en',
@@ -60,14 +60,14 @@ export default defineNuxtConfig({
     identity: {
       type: 'Organization',
       name: 'Video Grab',
-      url: process.env.SITE_URL || 'https://narduk.workers.dev',
+      url: process.env.SITE_URL || 'https://video-grab.nard.uk',
       logo: '/favicon.svg',
     },
   },
 
   image: {
     cloudflare: {
-      baseURL: process.env.SITE_URL || 'https://narduk.workers.dev',
+      baseURL: process.env.SITE_URL || 'https://video-grab.nard.uk',
     },
   },
 })
