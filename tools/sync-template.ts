@@ -432,8 +432,24 @@ jobs:
   }
   console.log()
 
-  // Phase 9: Update compatibility dates to today
-  console.log('Phase 9: Updating compatibility dates...')
+  // Phase 9: Ensure .setup-complete sentinel exists
+  // sync-template only runs on already-initialized derived apps, so the bootstrap
+  // guard (check-setup.js) should never block them. Create the sentinel if missing.
+  console.log('Phase 9: Checking bootstrap sentinel...')
+  const sentinelPath = join(appDir, '.setup-complete')
+  if (existsSync(sentinelPath)) {
+    console.log('  .setup-complete already exists.')
+  }
+  else {
+    console.log('  ADD: .setup-complete (app is already initialized)')
+    if (!dryRun) {
+      writeFileSync(sentinelPath, `initialized=${new Date().toISOString()}\napp=${appName}\nsource=sync-template\n`, 'utf-8')
+    }
+  }
+  console.log()
+
+  // Phase 10: Update compatibility dates to today
+  console.log('Phase 10: Updating compatibility dates...')
   const today = new Date().toISOString().slice(0, 10)
   let datesUpdated = 0
 
