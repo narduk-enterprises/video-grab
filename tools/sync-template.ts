@@ -397,6 +397,14 @@ jobs:
       }
     }
 
+    // Ensure packageManager is set (required by pnpm/action-setup in CI)
+    const templatePkg = JSON.parse(readFileSync(join(TEMPLATE_DIR, 'package.json'), 'utf-8'))
+    if (templatePkg.packageManager && pkg.packageManager !== templatePkg.packageManager) {
+      console.log(`  SET packageManager: "${templatePkg.packageManager}"`)
+      pkg.packageManager = templatePkg.packageManager
+      patchCount++
+    }
+
     const devDeps = pkg.devDependencies || {}
     const requiredDevDeps: Record<string, string> = {
       'tsx': '^4.21.0',
