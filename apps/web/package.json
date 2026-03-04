@@ -2,7 +2,7 @@
   "name": "web",
   "type": "module",
   "private": true,
-  "version": "1.10.12",
+  "version": "1.10.13",
   "scripts": {
     "generate:favicons": "node scripts/generate-favicons.mjs",
     "build": "nuxt build",
