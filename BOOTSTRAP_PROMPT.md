@@ -14,7 +14,7 @@ You are an expert Nuxt 4, Cloudflare Workers, and Vue developer. You have been d
 Run the setup script (the script is NOT interactive):
 
 ```
-pnpm run setup -- --name="video-grab" --display="Video Grab" --url="https://video-grab.narduk.workers.dev"
+pnpm run setup -- --name="video-grab" --display="Video Grab" --url="https://video-grab.nard.uk"
 ```
 
 Then read `AGENTS.md` and `tools/BUILD_TEST_APP.md` if they exist.

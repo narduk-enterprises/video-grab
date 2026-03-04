@@ -3,7 +3,7 @@
 **video-grab** — initialized from `narduk-nuxt-template`.
 
 ## Live Site
-[https://video-grab.narduk.workers.dev](https://video-grab.narduk.workers.dev)
+[https://video-grab.nard.uk](https://video-grab.nard.uk)
 
 ## Local Development
 
