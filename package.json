@@ -1,6 +1,6 @@
 {
   "name": "video-grab",
-  "version": "1.10.6",
+  "version": "1.10.7",
   "private": true,
   "packageManager": "pnpm@10.28.0",
   "scripts": {
