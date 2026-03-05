@@ -20,7 +20,7 @@ function extractTweetId(url: string): string | null {
 function getSyndicationToken(tweetId: string): string {
   return ((Number(tweetId) / 1e15) * Math.PI)
     .toString(6 ** 2)
-    .replace(/(0+|\.)/g, '')
+    .replaceAll(/(0+|\.)/g, '')
 }
 
 const SYNDICATION_FEATURES = [
@@ -178,7 +178,7 @@ function bestMp4FromVariants(variants: SyndicationMediaVariant[]): string | null
   const withBitrate = mp4s.filter((v) => v.bitrate != null && v.bitrate > 0)
   const best = withBitrate.length
     ? withBitrate.sort((a, b) => (b.bitrate ?? 0) - (a.bitrate ?? 0))[0]
-    : mp4s[mp4s.length - 1]
+    : mp4s.at(-1)
   return best?.src ?? null
 }
 
