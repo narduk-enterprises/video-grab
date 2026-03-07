@@ -5,7 +5,7 @@
   "description": "Narduk Nuxt 4 Layer — shared components, composables, server routes, and Drizzle schema for Cloudflare Workers apps",
   "repository": {
     "type": "git",
-    "url": "git@github.com:narduk-enterprises/video-grab.git",
+    "url": "https://github.com/narduk-enterprises/video-grab",
     "directory": "layers/narduk-nuxt-layer"
   },
   "publishConfig": {
@@ -89,6 +89,7 @@
     "./server/*": "./server/*",
     "./app/*": "./app/*",
     "./components/*": "./components/*",
+    "./testing/*": "./testing/*",
     "./server/database/schema": {
       "import": "./server/database/schema.ts"
     },
@@ -99,6 +100,7 @@
     "components/",
     "public/",
     "server/",
+    "testing/",
     "drizzle/",
     "nuxt.config.ts",
     "tsconfig.json",
