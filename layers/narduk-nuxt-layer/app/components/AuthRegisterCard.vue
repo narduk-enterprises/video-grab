@@ -20,6 +20,8 @@ import { z } from 'zod'
  * </AuthRegisterCard>
  */
 
+const appConfig = useAppConfig()
+
 const props = withDefaults(
   defineProps<{
     /** Card heading */
@@ -38,8 +40,15 @@ const props = withDefaults(
     subtitle: 'Get started with a free account',
     showLoginLink: true,
     loginPath: '/login',
-    redirectPath: '/dashboard/',
+    redirectPath: undefined,
   },
+)
+
+const resolvedRedirectPath = computed(
+  () =>
+    props.redirectPath ??
+    (appConfig as { auth?: { redirectPath?: string } }).auth?.redirectPath ??
+    '/dashboard/',
 )
 
 const emit = defineEmits<{
@@ -77,7 +86,7 @@ async function onSubmit() {
     const result = await register(state)
     await fetchSession()
     emit('success', result.user)
-    await navigateTo(props.redirectPath, { replace: true })
+    await navigateTo(resolvedRedirectPath.value, { replace: true })
   } catch (err: unknown) {
     const error = err as { data?: { message?: string }; statusMessage?: string }
     errorMsg.value = error.data?.message || error.statusMessage || 'Failed to create account'
@@ -110,32 +119,50 @@ async function onSubmit() {
       variant="subtle"
       title="Error"
       :description="errorMsg"
+      data-testid="auth-register-error"
       class="mb-4"
     />
 
     <!-- Extra content above the form -->
     <slot name="before-form" />
 
-    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
+    <UForm :schema="schema" :state="state" class="space-y-4" @submit.prevent="onSubmit">
       <UFormField name="name" label="Name">
-        <UInput v-model="state.name" placeholder="John Doe" class="w-full" />
+        <UInput
+          v-model="state.name"
+          placeholder="John Doe"
+          class="w-full"
+          data-testid="auth-register-name"
+        />
       </UFormField>
 
       <UFormField name="email" label="Email">
-        <UInput v-model="state.email" type="email" placeholder="you@example.com" class="w-full" />
+        <UInput
+          v-model="state.email"
+          type="email"
+          placeholder="you@example.com"
+          class="w-full"
+          data-testid="auth-register-email"
+        />
       </UFormField>
 
       <UFormField name="password" label="Password">
-        <UInput v-model="state.password" type="password" placeholder="••••••••" class="w-full" />
+        <UInput
+          v-model="state.password"
+          type="password"
+          placeholder="••••••••"
+          class="w-full"
+          data-testid="auth-register-password"
+        />
       </UFormField>
 
       <UButton
-        type="button"
+        type="submit"
         color="primary"
         class="w-full"
         :loading="loading"
         block
-        @click="onSubmit"
+        data-testid="auth-register-submit"
       >
         Create Account
       </UButton>
