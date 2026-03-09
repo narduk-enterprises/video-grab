@@ -20,6 +20,8 @@ import { z } from 'zod'
  * </AuthLoginCard>
  */
 
+const appConfig = useAppConfig()
+
 const props = withDefaults(
   defineProps<{
     /** Card heading */
@@ -40,9 +42,16 @@ const props = withDefaults(
     subtitle: 'Sign in to your account',
     showRegisterLink: true,
     registerPath: '/register',
-    redirectPath: '/dashboard/',
+    redirectPath: undefined,
     showDemoLogin: false,
   },
+)
+
+const resolvedRedirectPath = computed(
+  () =>
+    props.redirectPath ??
+    (appConfig as { auth?: { redirectPath?: string } }).auth?.redirectPath ??
+    '/dashboard/',
 )
 
 const emit = defineEmits<{
@@ -79,7 +88,7 @@ async function onSubmit() {
     const result = await login(state)
     await fetchSession()
     emit('success', result.user)
-    await navigateTo(props.redirectPath, { replace: true })
+    await navigateTo(resolvedRedirectPath.value, { replace: true })
   } catch (err: unknown) {
     const error = err as {
       data?: { statusMessage?: string; message?: string }
@@ -105,7 +114,7 @@ async function onDemoLogin() {
     const result = await loginAsTestUser()
     await fetchSession()
     emit('success', result.user)
-    await navigateTo(props.redirectPath, { replace: true })
+    await navigateTo(resolvedRedirectPath.value, { replace: true })
   } catch (err: unknown) {
     const error = err as { data?: { message?: string } }
     errorMsg.value = error.data?.message || 'Unable to sign in with demo user'
@@ -138,28 +147,41 @@ async function onDemoLogin() {
       variant="subtle"
       title="Error"
       :description="errorMsg"
+      data-testid="auth-login-error"
       class="mb-4"
     />
 
     <!-- Extra content above the form -->
     <slot name="before-form" />
 
-    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
+    <UForm :schema="schema" :state="state" class="space-y-4" @submit.prevent="onSubmit">
       <UFormField name="email" label="Email">
-        <UInput v-model="state.email" type="email" placeholder="you@example.com" class="w-full" />
+        <UInput
+          v-model="state.email"
+          type="email"
+          placeholder="you@example.com"
+          class="w-full"
+          data-testid="auth-login-email"
+        />
       </UFormField>
 
       <UFormField name="password" label="Password">
-        <UInput v-model="state.password" type="password" placeholder="••••••••" class="w-full" />
+        <UInput
+          v-model="state.password"
+          type="password"
+          placeholder="••••••••"
+          class="w-full"
+          data-testid="auth-login-password"
+        />
       </UFormField>
 
       <UButton
-        type="button"
+        type="submit"
         color="primary"
         class="w-full"
         :loading="loading"
         block
-        @click="onSubmit"
+        data-testid="auth-login-submit"
       >
         Sign In
       </UButton>
@@ -172,6 +194,7 @@ async function onDemoLogin() {
         class="w-full"
         icon="i-lucide-zap"
         :loading="demoLoading"
+        data-testid="auth-login-demo"
         @click="onDemoLogin"
       >
         Sign In as Demo User
